@@ -2,33 +2,41 @@ import streamlit as st
 import pandas as pd
 import os
 
+# CSV file path
+CSV_FILE = 'students.csv'
+
 # Title
-st.title("Student Registration Form")
+st.title("Student Details Form")
 
-# Input fields
-student_name = st.text_input("Student Name")
-student_mark = st.number_input("Student Mark", min_value=0, max_value=100)
-student_degree = st.selectbox("Student Degree", ["BSc", "MSc", "PhD"])
+# Form for data entry
+with st.form("student_form"):
+    name = st.text_input("Name")
+    roll_no = st.text_input("Roll Number")
+    degree = st.text_input("Degree")
+    submitted = st.form_submit_button("Submit")
 
-# File path
-file_path = "C:/Users/ayush/Desktop/ML_GUI_CLOUD/student_form/students.csv"
+    if submitted:
+        if name and roll_no and degree:
+            # Check if CSV exists
+            if os.path.exists(CSV_FILE):
+                df = pd.read_csv(CSV_FILE)
+            else:
+                df = pd.DataFrame(columns=["Name", "Roll Number", "Degree"])
 
-# Submit button
-if st.button("Submit"):
-    if student_name:
-        # New data
-        new_data = pd.DataFrame({
-            "Name": [student_name],
-            "Mark": [student_mark],
-            "Degree": [student_degree]
-        })
+            # Add new data
+            new_data = {"Name": name, "Roll Number": roll_no, "Degree": degree}
+            df = df.append(new_data, ignore_index=True)
 
-        # Append to CSV or create new one
-        if os.path.exists(file_path):
-            new_data.to_csv(file_path, mode='a', header=False, index=False)
+            # Save to CSV
+            df.to_csv(CSV_FILE, index=False)
+            st.success("Student details saved successfully!")
         else:
-            new_data.to_csv(file_path, index=False)
+            st.error("Please fill out all fields.")
 
-        st.success("Student record saved successfully!")
-    else:
-        st.error("Please enter the student's name.")
+# Display current data
+if os.path.exists(CSV_FILE):
+    st.subheader("Saved Student Details")
+    df = pd.read_csv(CSV_FILE)
+    st.dataframe(df)
+else:
+    st.info("No data found. Please add student details.")
