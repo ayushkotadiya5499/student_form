@@ -11,7 +11,7 @@ student_mark = st.number_input("Student Mark", min_value=0, max_value=100)
 student_degree = st.selectbox("Student Degree", ["BSc", "MSc", "PhD"])
 
 # File path
-file_path = "students.csv"
+file_path = "C:/Users/ayush/Desktop/ML_GUI_CLOUD/student_form/students.csv"
 
 # Submit button
 if st.button("Submit"):
